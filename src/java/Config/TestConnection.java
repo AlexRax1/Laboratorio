@@ -43,6 +43,7 @@ public class TestConnection extends HttpServlet {
         } finally {
             if (connection != null) {
                 try {
+                    
                     connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();

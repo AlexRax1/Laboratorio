@@ -5,8 +5,6 @@
 --%>
 
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,10 +12,12 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <!--div>
-            <p>Usuario: <c:out value="${usuario}"/></p>
-            <p>Rol: <c:out value="${rol}"/></p>
-        </div-->
+        
+        <div>
+            <p>Usuario: ${sessionScope.usuario}</p> <!-- Acceder al usuario desde la sesión -->
+            <p>Rol: ${sessionScope.rol}</p>       <!-- Acceder al rol desde la sesión -->
+        </div>
+        
         
         <div class="container">
             <h2>Contenido de la Página 1</h2>
