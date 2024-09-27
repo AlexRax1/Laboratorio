@@ -4,7 +4,15 @@
     Author     : alex1
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ include file="barraNavegacion.jsp" %>
+<%
+    // Verifica si el usuario está autenticado
+    if (session.getAttribute("usuario") == null) {
+        // Redirige a index.jsp si no hay usuario
+        response.sendRedirect("../index.jsp");
+        return; // Asegura que no continúe ejecutando el resto de la página después de la redirección
+    }
+%>
 <!DOCTYPE html>
 <html>
     <head>
