@@ -7,7 +7,6 @@ package Controlador;
 
 import Modelo.Persona;
 import ModeloDAO.PersonaDAO;
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -50,6 +49,9 @@ public class ControladorLogin extends HttpServlet {
                     break;
                 case 3:
                     response.sendRedirect("vistas/pagina3.jsp");
+                    break;
+                case 4:
+                    response.sendRedirect("vistas/formulario.jsp");
                     break;
                 default:
                     request.setAttribute("errorMessage", "Algo salió mal");

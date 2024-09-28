@@ -46,6 +46,7 @@
                                 <c:when test="${sessionScope.rol == 1}">Administrador</c:when>
                                 <c:when test="${sessionScope.rol == 2}">Editor</c:when>
                                 <c:when test="${sessionScope.rol == 3}">Usuario</c:when>
+                                <c:when test="${sessionScope.rol == 4}">Usuario formulario</c:when>
                                 <c:otherwise>No asignado</c:otherwise>
                             </c:choose>
                         </span>
@@ -107,7 +108,7 @@
                     </c:if>
 
                     <!-- Opciones solo para Usuario (rol 3) -->
-                    <c:if test="${sessionScope.rol == 3}">
+                    <c:if test="${sessionScope.rol == 3 or sessionScope.rol == 4}">
                         <li class="nav-item">
                             <a class="nav-link" href="userPage1.jsp">Ver Contenido</a>
                         </li>
