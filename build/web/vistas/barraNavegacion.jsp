@@ -22,12 +22,40 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <title>Mi Aplicación</title>
+        <title>Barra Navegacion</title>
         <style>
             nav.navbar {
-              flex-flow: column nowrap !important;
+                flex-flow: column nowrap !important;
             }
-      </style>
+
+            /* Estilos para el submenú */
+            .dropdown-submenu {
+                position: relative;
+            }
+
+            .dropdown-submenu .dropdown-menu {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 100%;
+                margin-top: -1px;
+            }
+
+            .dropdown-submenu:hover .dropdown-menu {
+                display: block;
+            }
+
+            /* Asegura que los submenús funcionen bien en pantallas móviles */
+            @media (max-width: 768px) {
+                .dropdown-submenu .dropdown-menu {
+                    position: relative;
+                    left: 0;
+                    top: 0;
+                    margin-top: 0;
+                }
+            };
+        </style>
+
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light" >
@@ -58,8 +86,8 @@
                             <a class="btn btn-danger" href="barraNavegacion.jsp?action=logout">Cerrar Sesión</a>
                         </c:if>
                     </div>
-                    
-                    <% 
+
+                    <%
                         // Verifica si el parámetro "action" tiene el valor "logout"
                         String action = request.getParameter("action");
                         if ("logout".equals(action)) {
@@ -72,7 +100,7 @@
                             return; // Asegura que no continúe ejecutando el resto de la página después de la redirección
                         }
                     %>
-                    
+
                 </div>
             </div>
 
@@ -89,11 +117,32 @@
 
                     <!-- Opciones solo para Administrador (rol 1) -->
                     <c:if test="${sessionScope.rol == 1}">
-                        <li class="nav-item">
-                            <a class="nav-link" href="pagina2.jsp">Gestionar Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pagina3.jsp">Reportes</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Opciones para el Administrador
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li><a class="dropdown-item" href="pagina2.jsp">Gestionar Usuarios</a></li>
+                                <li><a class="dropdown-item" href="MantenimientoCatalogo.jsp">Mantenimiento de Catálogos</a></li>
+
+                                <!-- Submenú dentro del menú desplegable -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">Servicios</a>
+                                    <ul class="dropdown-menu">
+                                        <li class="dropdown-submenu">
+                                            <a class="dropdown-item dropdown-toggle" href="#">Sistema de Control de Muestras-SCM</a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="MantenimientoCatalogo.jsp">Mantenimento de catalogos</a></li>
+                                                <li><a class="dropdown-item" href="#">Subopción 2</a></li>
+                                            </ul>
+                                        </li>                                        
+                                        <li><a class="dropdown-item" href="#">Subopción 2</a></li>
+                                    </ul>
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Opción Separada</a></li>
+                            </ul>
                         </li>
                     </c:if>
 

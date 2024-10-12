@@ -48,10 +48,10 @@ public class ControladorLogin extends HttpServlet {
                     response.sendRedirect("vistas/pagina2.jsp");
                     break;
                 case 3:
-                    response.sendRedirect("vistas/pagina3.jsp");
+                    response.sendRedirect("vistas/RegistroSolicitudMuestra.jsp");
                     break;
                 case 4:
-                    response.sendRedirect("vistas/formulario.jsp");
+                    response.sendRedirect("vistas/Formulario.jsp");
                     break;
                 default:
                     request.setAttribute("errorMessage", "Algo salió mal");

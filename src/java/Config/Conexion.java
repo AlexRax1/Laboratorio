@@ -13,7 +13,7 @@ public class Conexion {
             Class.forName("org.postgresql.Driver");
 
             // Establecer la conexión
-            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/progra2prueba", "postgres", "1234");
+            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Laboratorio", "postgres", "1234");
             System.out.println("Conexión correcta a la base de datos");
         } catch (ClassNotFoundException e) {
             System.err.println("Driver no encontrado: " + e.getMessage());
