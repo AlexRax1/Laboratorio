@@ -5,8 +5,8 @@
  */
 package Controlador;
 
-import Modelo.Persona;
-import ModeloDAO.PersonaDAO;
+import Modelo.Usuario;
+import ModeloDAO.UsuarioDAO;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -23,22 +23,21 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/Controlador")
 public class ControladorLogin extends HttpServlet {
     
-    private PersonaDAO personaDAO = new PersonaDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        Persona persona = new Persona();
-        persona.setUsuario(request.getParameter("usuario"));
-        persona.setPassword(request.getParameter("password"));
+        Usuario usuario = new Usuario();
+        usuario.setLogin(request.getParameter("usuario"));
+        usuario.setPassword(request.getParameter("password"));
 
-        PersonaDAO personaDAO = new PersonaDAO();
-        if (personaDAO.validar(persona)) {
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        if (usuarioDAO.validar(usuario)) {
             // Asegúrate de que el rol se esté configurando correctamente en la validación
-            int rol = persona.getRol();
+            int rol = usuario.getRol();
             
             HttpSession session = request.getSession(); 
-            designarDatos(session, persona);
+            designarDatos(session, usuario );
 
             switch (rol) {
                 case 1:
@@ -65,9 +64,11 @@ public class ControladorLogin extends HttpServlet {
         }
     }
     
-    private void designarDatos(HttpSession session, Persona persona) {
-        session.setAttribute("usuario", persona.getUsuario());
-        session.setAttribute("rol", persona.getRol());
+    private void designarDatos(HttpSession session, Usuario usuario) {
+        session.setAttribute("usuario", usuario.getLogin());
+        session.setAttribute("rol", usuario.getRol());
+        session.setAttribute("puesto", usuario.getActor());
+        
     }
  
 }

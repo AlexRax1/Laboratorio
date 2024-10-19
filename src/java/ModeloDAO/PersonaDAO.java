@@ -24,7 +24,7 @@ public class PersonaDAO {
     ResultSet rs;
 
     public boolean validar(Persona persona) {
-        String sql = "SELECT rol FROM persona WHERE usuario = ? AND password = ?";
+        String sql = "SELECT id_rol FROM Usuario WHERE usuario = ? AND password = ?";
         try {
             con = new Conexion().getConnection();
             PreparedStatement ps = con.prepareStatement(sql);

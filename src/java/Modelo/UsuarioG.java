@@ -9,29 +9,25 @@ package Modelo;
  *
  * @author alex1
  */
-public class Usuario {
+public class UsuarioG {
     String login;
     String nit;
     String nombre;
-    boolean estado;
-    int rol;
-    String rolNombre;
     String actor;
-    int cargoTrabajo;
+    String puesto; 
+    String rol;
     String password;
 
-    public Usuario() {
+    public UsuarioG() {
     }
 
-    public Usuario(String login, String nit, String nombre, boolean estado, int rol, String rolNombre, String actor, int cargoTrabajo, String password) {
+    public UsuarioG(String login, String nit, String nombre, String actor, String puesto, String rol, String password) {
         this.login = login;
         this.nit = nit;
         this.nombre = nombre;
-        this.estado = estado;
-        this.rol = rol;
-        this.rolNombre = rolNombre;
         this.actor = actor;
-        this.cargoTrabajo = cargoTrabajo;
+        this.puesto = puesto;
+        this.rol = rol;
         this.password = password;
     }
 
@@ -59,30 +55,6 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public boolean isEstado() {
-        return estado;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
-    }
-
-    public int getRol() {
-        return rol;
-    }
-
-    public void setRol(int rol) {
-        this.rol = rol;
-    }
-
-    public String getRolNombre() {
-        return rolNombre;
-    }
-
-    public void setRolNombre(String rolNombre) {
-        this.rolNombre = rolNombre;
-    }
-
     public String getActor() {
         return actor;
     }
@@ -91,12 +63,20 @@ public class Usuario {
         this.actor = actor;
     }
 
-    public int getCargoTrabajo() {
-        return cargoTrabajo;
+    public String getPuesto() {
+        return puesto;
     }
 
-    public void setCargoTrabajo(int cargoTrabajo) {
-        this.cargoTrabajo = cargoTrabajo;
+    public void setPuesto(String puesto) {
+        this.puesto = puesto;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public String getPassword() {
@@ -106,7 +86,7 @@ public class Usuario {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
     
     
 }

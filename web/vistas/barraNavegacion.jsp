@@ -77,6 +77,7 @@
                                 <c:when test="${sessionScope.rol == 4}">Usuario formulario</c:when>
                                 <c:otherwise>No asignado</c:otherwise>
                             </c:choose>
+                            | Cargo: ${sessionScope.puesto}
                         </span>
                     </div>
 
@@ -119,7 +120,7 @@
                     <c:if test="${sessionScope.rol == 1}">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Opciones para el Administrador
+                                Servicios
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                 <li><a class="dropdown-item" href="pagina2.jsp">Gestionar Usuarios</a></li>
@@ -127,44 +128,42 @@
 
                                 <!-- Submenú dentro del menú desplegable -->
                                 <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Servicios</a>
+                                    <a class="dropdown-item dropdown-toggle" href="#">Sistema de Control de Muestras-SCM</a>
                                     <ul class="dropdown-menu">
-                                        <li class="dropdown-submenu">
-                                            <a class="dropdown-item dropdown-toggle" href="#">Sistema de Control de Muestras-SCM</a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="MantenimientoCatalogo.jsp">Mantenimento de catalogos</a></li>
-                                                <li><a class="dropdown-item" href="#">Subopción 2</a></li>
-                                            </ul>
-                                        </li>                                        
-                                        <li><a class="dropdown-item" href="#">Subopción 2</a></li>
-                                    </ul>
-                                </li>
 
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Opción Separada</a></li>
+                                        <li><a class="dropdown-item" href="MantenimientoCatalogo.jsp">Mantenimento de catalogos</a></li>
+                                        <li><a class="dropdown-item" href="ReasignacionSolicitudes.jsp">Reasignación de Solicitudes.</a></li>
+                                        <li><a class="dropdown-item" href="MantenimientoUsuarios.jsp">Mantenimiento Usuarios.</a></li>
+
+                                </li>                                        
                             </ul>
                         </li>
-                    </c:if>
 
-                    <!-- Opciones solo para Editor (rol 2) -->
-                    <c:if test="${sessionScope.rol == 2}">
-                        <li class="nav-item">
-                            <a class="nav-link" href="editorPage1.jsp">Publicar Artículos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="editorPage2.jsp">Revisar Comentarios</a>
-                        </li>
-                    </c:if>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Opción Separada</a></li>
+                    </ul>
+                    </li>
+                </c:if>
 
-                    <!-- Opciones solo para Usuario (rol 3) -->
-                    <c:if test="${sessionScope.rol == 3 or sessionScope.rol == 4}">
-                        <li class="nav-item">
-                            <a class="nav-link" href="userPage1.jsp">Ver Contenido</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="userPage2.jsp">Enviar Comentarios</a>
-                        </li>
-                    </c:if>
+                <!-- Opciones solo para Editor (rol 2) -->
+                <c:if test="${sessionScope.rol == 2}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="editorPage1.jsp">Publicar Artículos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="editorPage2.jsp">Revisar Comentarios</a>
+                    </li>
+                </c:if>
+
+                <!-- Opciones solo para Usuario (rol 3) -->
+                <c:if test="${sessionScope.rol == 3 or sessionScope.rol == 4}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="userPage1.jsp">Ver Contenido</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="userPage2.jsp">Enviar Comentarios</a>
+                    </li>
+                </c:if>
                 </ul>
             </div>
         </nav>

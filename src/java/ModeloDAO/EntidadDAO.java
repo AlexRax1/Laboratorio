@@ -86,12 +86,6 @@ public class EntidadDAO {
                 entidad.setNit(resultSet.getString("nit"));
                 entidad.setNombre(resultSet.getString("nombre"));
                 // Si tienes más campos, añádelos aquí
-                System.out.println("si ejecuta el select");
-                System.out.println("si ejecuta el select");
-                System.out.println("si ejecuta el select");
-                System.out.println("si ejecuta el select");
-                System.out.println("si ejecuta el select");
-                System.out.println("si ejecuta el select");
                 entidades.add(entidad);
             }
         } catch (SQLException e) {
