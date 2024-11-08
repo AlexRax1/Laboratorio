@@ -42,7 +42,7 @@
                 // Mostrar u ocultar campos según la selección de "tipo de solicitud"
                 $("input[name='tipoSolicitud']").on('change', function () {
                     const tipoSolicitud = $("input[name='tipoSolicitud']:checked").val();
-                    if (tipoSolicitud === '1') { // Muestra para análisis
+                    if (tipoSolicitud === 'AR') { // Muestra para análisis
                         $("#numeroMuestraDiv, #descripcionProductoDiv").show(); // Mostrar estos campos
                     } else {
                         $("#numeroMuestraDiv, #descripcionProductoDiv").hide(); // Ocultar estos campos
@@ -64,7 +64,7 @@
 
                         // Llamada AJAX al servlet
                         $.ajax({
-                            url: "ControladorRegistroSolicitudMuestra", // URL de tu Servlet
+                            url: "${pageContext.request.contextPath}/buscarNitProveedor", // URL de tu Servlet
                             method: "GET", // Puede ser POST si prefieres
                             data: {codigo: inputValue}, // Envía el valor ingresado como parámetro
                             success: function (response) {
@@ -83,7 +83,7 @@
             });
         </script>
         <!--Seleccionar el usuario a asignar-->
-        <script>
+        <!--script>
             $(document).ready(function () {
                 // Obtener el ID del usuario seleccionado
                 $("input[name='selectedUser']").on('change', function () {
@@ -91,26 +91,105 @@
                     $("#selectedUserId").val(selectedUserId); // Almacenar el ID seleccionado
                 });
             });
+        </script-->
+        <script>
+            // Cargar usuarios para el select
+            $(document).ready(function () {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/cargarAnalistas', // La URL del servlet
+                    type: 'GET',
+                    dataType: 'json', // El formato de la respuesta es JSON
+                    success: function (data) {
+                        // Recorre cada objeto del arreglo JSON recibido
+                        $.each(data, function (index, usuario) {
+                            // Agregar una opción al select por cada usuario
+                            $('#usuariosSelect').append(
+                                    $('<option></option>').val(usuario.nit).text(usuario.nombre) // Establece el NIT como valor
+                                    );
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error al cargar los usuarios: " + error);
+                    }
+                });
+            });
         </script>
 
+
+
+        <script>
+            //Guardar Solicitud
+            $(document).ready(function () {
+                $('#multiStepForm').on('submit', function (event) {
+                    event.preventDefault(); // Prevenir el envío por defecto
+
+                    // Recolectar datos del formulario
+                    var formData = $(this).serialize(); // Serializar datos del formulario
+
+                    // Enviar datos a un servlet
+                    $.ajax({
+                        type: 'POST',
+                        url: '${pageContext.request.contextPath}/guardarSolicitud', // Cambia esto por la URL de tu servlet
+                        data: formData,
+                        success: function (response) {
+                            // Manejar la respuesta del servidor
+                            alert('El registro de la muestra se realizo con éxito Número de Muestra ?Número de Muestra?.');
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            // Manejar errores
+                            alert('Por favor verifique, el número de muestra de ya se encuentra registrado en otra solicitud, número de solicitud: ?número de solicitud?.');
+                        }
+                    });
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                // Ejecutar la búsqueda al presionar Enter en el campo de entrada "loginu"
+                $("#nitSolicitante").on("keydown", function (event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault(); // Evita el envío automático del formulario
+
+                        var login = "";
+                        var nit = $('#nitSolicitante').val();
+
+                        // Llamada AJAX al servlet para buscar el usuario
+                        $.ajax({
+                            url: `${pageContext.request.contextPath}/buscarUsuario`,
+                            type: 'GET',
+                            data: {
+                                login: login,
+                                nit: nit
+                            },
+                            success: function (data) {
+                                // Actualizar los campos con la respuesta del servidor
+                                $('#nombreSolicitante').val(data.nombre);
+                            },
+                            error: function () {
+                                alert('Usuario no encontrado');
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
     </head>
     <body>
         <div class="container mt-5">
             <h1 class="text-center">Nueva Solicitud de Muestra</h1>
 
-            <form id="multiStepForm" action="#" method="post" class="needs-validation" novalidate>
+            <form id="multiStepForm" action="#" method="post" class="needs-validation" autocomplete="off" novalidate>
                 <!-- Paso 1 -->
                 <div class="step active">
                     <div class="form-group">
                         <label>Ingrese el tipo de solicitud</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="radio1" name="tipoSolicitud" value="1" required>
+                            <input class="form-check-input" type="radio" id="radio1" name="tipoSolicitud" value="AR" required>
                             <label class="form-check-label" for="radio1">Muestra para análisis</label>
-                            <!--aca ya me deja de cargar-->
-
-                        </div><!--esto es lo ultimo que me carga-->
+                        </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="radio2" name="tipoSolicitud" value="2" required>
+                            <input class="form-check-input" type="radio" id="radio2" name="tipoSolicitud" value="OTM" required>
                             <label class="form-check-label" for="radio2">Solicitud sin muestra</label>
                         </div>
                         <div class="invalid-feedback">Por favor, seleccione una opción.</div>
@@ -123,11 +202,11 @@
                     <div class="form-group">
                         <label>Ingrese el tipo de entidad</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="radioEntidad1" name="tipoEntidad" value="1" required>
+                            <input class="form-check-input" type="radio" id="radioEntidad1" name="tipoEntidad" value="privada" required>
                             <label class="form-check-label" for="radioEntidad1">Entidad Privada</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="radioEntidad2" name="tipoEntidad" value="2" required>
+                            <input class="form-check-input" type="radio" id="radioEntidad2" name="tipoEntidad" value="publica" required>
                             <label class="form-check-label" for="radioEntidad2">Entidad Pública</label>
                         </div>
                         <div class="invalid-feedback">Por favor, seleccione una opción.</div>
@@ -188,13 +267,15 @@
 
                     <div class="form-group">
                         <label for="nitSolicitante">NIT del solicitante:</label>
-                        <input type="text" class="form-control" id="nitSolicitante" name="nitSolicitante" >
+                        <input type="text" class="form-control" id="nitSolicitante" name="nitSolicitante">
                         <div class="invalid-feedback">Por favor, ingrese el NIT del solicitante.</div>
                     </div>
-                    <div class="form-group">     
-                        <label for="nombreProveedor">Nombre Solicitante</label>
+
+                    <div class="form-group">
+                        <label for="nombreSolicitante">Nombre Solicitante</label>
                         <input type="text" class="form-control" id="nombreSolicitante" name="nombreSolicitante" readonly>
                     </div>
+
                     <div class="form-group">
                         <label for="correoSolicitante">Correo electrónico solicitante:</label>
                         <input type="email" class="form-control" id="correoSolicitante" name="correoSolicitante" required>
@@ -211,51 +292,23 @@
                     <div id="descripcionProductoDiv" style="display:none;">
                         <div class="form-group">
                             <label for="descripcionProducto">Descripción del producto:</label>
-                            <textarea class="form-control" id="descripcionProducto" name="descripcionProducto"></textarea>
+                            <textarea class="form-control" id="descripcionProducto" name="descripcionProducto" style="resize: none;"></textarea>
                             <div class="invalid-feedback">Por favor, ingrese la descripción del producto.</div>
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-secondary button" onclick="prevStep()">Volver</button>
-                    <button type="button" class="btn btn-primary button" onclick="nextStep()">Siguiente</button>
-
-                </div>
-
-
-                <!-- Paso 4 - asignar analista -->
-                <div class="step">
-                    <div class="form-group">
-                        <h2>Seleccione un Usuario</h2>
-
-                            <!-- Campo oculto para almacenar el ID seleccionado -->
-                            <input type="hidden" id="usuarioSeleccionado" name="usuarioSeleccionado">
-
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Seleccionar</th>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                        <tr>
-                                        <td>
-                                        </td>
-                                        
-                                    </tr>
-                                
-                                </tbody>
-                            </table>
-
+                    <!-- seleccionar analista-->
+                    <div class="mb-3">
+                        <label for="usuariosSelect" class="form-label">Seleccione un analista</label>
+                        <select id="usuariosSelect" class="form-select" name="usuariosSelect" required>
+                            <option value="">Seleccione un analista</option>
+                        </select>
                     </div>
+
                     <button type="button" class="btn btn-secondary button" onclick="prevStep()">Volver</button>
-                    <button type="submit" class="btn btn-primary button">Enviar</button>
+                    <button type="submit" class="btn btn-primary button">Guardar</button>
+
                 </div>
-
-
-
-
             </form>
         </div>
 

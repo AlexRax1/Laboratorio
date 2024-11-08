@@ -54,6 +54,7 @@
 
                 // Cambiar Estado
                 $(document).on('click', '.cambiar-estado', function () {
+                    limpiarFormulario();
                     var nit = $(this).data('id'); // Obtener el NIT
                     var nombre = $(this).closest('tr').find('td:eq(1)').text(); // Obtener el nombre de la segunda celda
                     $('#nitEstado').val(nit);
@@ -61,21 +62,65 @@
 
                     $('#modalCambiarEstado').modal('show');
                 });
+
+
+                // guardar nuevo estado
+                // guardar nuevo estado
                 // guardar nuevo estado
                 $('#form-cambiar-estado').on('submit', function (e) {
                     e.preventDefault();
 
                     var nit = $('#nitEstado').val();
+                    var reasignar = $('#reasignar').prop('checked');
+                    ;
+
+                    // Validar si el NIT tiene solicitudes activas
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/verificarSolicitudes', // Asegúrate de crear este servlet
+                        type: 'GET',
+                        data: {nit: nit},
+                        success: function (response) {
+                            if (response.tieneSolicitudesActivas) {
+                                // Si tiene solicitudes activas, mostrar campos adicionales
+                                if (reasignar) {
+                                    cargarSolicitudes();
+                                    $('#modalReasignar').hide();
+                                    $('#tablaReasignar').show();
+
+                                } else {
+                                    alert("Este NIT tiene solicitudes activas. Llena los campos adicionales antes de continuar.");
+                                }
+                            } else {
+                                // Si no tiene solicitudes activas, proceder a cambiar el estado
+                                enviarCambioEstado();
+                            }
+                        },
+                        error: function () {
+                            alert('Error al verificar las solicitudes activas');
+                        }
+                    });
+                });
+
+
+
+                // Función para enviar la solicitud de cambio de estado
+                function enviarCambioEstado() {
+                    var nit = $('#nitEstado').val();
                     var nuevoEstado = $('#nuevoEstado').val();
+                    var motivo = $('#comentario').val();
+                    var nitAdicion = loginUsuario;
+
                     $.ajax({
                         url: '${pageContext.request.contextPath}/cambiarEstado',
                         type: 'POST',
                         data: {
                             nit: nit,
-                            nuevoEstado: nuevoEstado
+                            nuevoEstado: nuevoEstado,
+                            motivo: motivo,
+                            nitAdicion: nitAdicion
                         },
                         success: function () {
-                            alert("cambio realizado con exito");
+                            alert("Cambio realizado con éxito");
                             $('#modalCambiarEstado').modal('hide');
                             location.reload();
                         },
@@ -83,7 +128,10 @@
                             alert('Error al cambiar el estado');
                         }
                     });
-                });
+                }
+
+
+
 
                 // Manejar el clic en el botón "Agregar Usuario"
                 $('#agregarUsuario').on('click', function () {
@@ -125,6 +173,8 @@
                         }
                     });
                 });
+
+
                 //Agregar Usuario
                 $('#guardaru').on('click', function (e) {
                     e.preventDefault();
@@ -137,12 +187,176 @@
                         },
                         success: function (data) {
                             alert('Usuario agregado correctamente');
+                            location.reload();
                         },
                         error: function () {
                             alert('no se pudo agregar');
                         }
                     });
                 });
+
+
+
+
+
+                //REASIGNAR TODAS LAS SOLICITUDES
+                //REASIGNAR TODAS LAS SOLICITUDES
+                //REASIGNAR TODAS LAS SOLICITUDES
+                function cargarSolicitudes() {
+                    // Obtener el valor del NIT del estado
+                    var usuario = $('#nitEstado').val();
+
+                    // Realizar la solicitud AJAX para obtener las solicitudes, pasando el usuario como parámetro
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/obtenerSolicitudesAnalista', // URL del servlet o endpoint
+                        type: 'GET',
+                        data: {
+                            nit: usuario // Enviamos el loginUsuario como parámetro
+                        },
+                        success: function (response) {
+                            var solicitudes = response.solicitudes; // Asegúrate de que los datos devueltos tengan esta estructura
+                            var tabla = $('#tablaSolicitudes tbody'); // Selecciona la tabla por su ID
+                            tabla.empty(); // Limpia la tabla antes de agregar los nuevos datos
+
+                            // Hacer una llamada AJAX para cargar los usuarios para el select, pasando también el loginUsuario
+                            $.ajax({
+                                url: '${pageContext.request.contextPath}/cargarAnalistas2', // Cambia la URL si es necesario
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    valor: usuario // Enviamos el loginUsuario aquí también
+                                },
+                                success: function (data) {
+                                    // Verifica la estructura de los datos devueltos (depuración)
+                                    console.log(data);
+
+                                    // Recorre cada solicitud para agregarla a la tabla
+                                    solicitudes.forEach(function (solicitud) {
+                                        var row = $('<tr>');
+                                        row.append('<td>' + solicitud.numero_muestra + '</td>');
+                                        row.append('<td>' + solicitud.estado_solicitud + '</td>');
+                                        row.append('<td>' + solicitud.estado_muestra + '</td>');
+
+                                        // Columna con un select
+                                        var select = $('<select required>');
+                                        select.append('<option value="">Seleccione un usuario</option>'); // Opción predeterminada
+
+                                        // Recorrer los usuarios cargados y agregar las opciones al select
+                                        $.each(data, function (index, analista) {
+                                            select.append(
+                                                    $('<option></option>').val(analista.nit).text('Nit: ' + analista.nit + '   |   Usuario: ' + analista.nombre)
+                                                    );
+                                        });
+
+                                        // Añadir el select a la fila
+                                        row.append($('<td>').append(select));
+
+                                        // Añadir la fila a la tabla
+                                        tabla.append(row);
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText); // Ver detalles del error
+                                    alert("Error al cargar los usuarios: " + error);
+                                }
+                            });
+                        },
+                        error: function () {
+                            alert('Error al cargar las solicitudes');
+                        }
+                    });
+                }
+
+                $('#btnCambiarEstadoRe').click(function () {
+                    // Llamar a guardarAsignaciones y verificar si se ejecutó correctamente
+                    var asignacionesGuardadas = guardarAsignaciones();
+
+                    // Si las asignaciones fueron guardadas correctamente, llamar a enviarCambioEstado
+                    if (asignacionesGuardadas) {
+                        enviarCambioEstado(); // Llamamos a la función
+                    }
+                });
+
+//Reasignar todo
+                function guardarAsignaciones() {
+                    // Variable para verificar si todos los selects están llenos
+                    var todoSeleccionado = true;
+
+                    // Recorremos cada fila de la tabla
+                    $('#tablaSolicitudes tbody tr').each(function () {
+                        // Obtener el valor de la primera columna (número de muestra)
+                        var numeroMuestra = $(this).find('td').eq(0).text().trim(); // Primer columna de cada fila
+
+                        // Obtener el valor seleccionado en el select de la misma fila
+                        var analistaSeleccionado = $(this).find('td select').val(); // Valor del select en la fila actual
+
+                        // Verificar si el select tiene un valor seleccionado (es requerido)
+                        if (analistaSeleccionado === "") {
+                            todoSeleccionado = false; // Si algún select está vacío, marcamos como no seleccionado
+                            console.log('No se ha seleccionado un analista para el número de muestra: ' + numeroMuestra);
+                        }
+                    });
+
+                    // Si algún select no está seleccionado, mostrar el mensaje de error y detener la ejecución
+                    if (!todoSeleccionado) {
+                        alert('Por favor, seleccione un analista para todas las solicitudes.');
+                        return false; // Detenemos la ejecución de la función y devolvemos false
+                    }
+
+                    // Si todos los selects están seleccionados, continuar con la llamada AJAX
+                    $('#tablaSolicitudes tbody tr').each(function () {
+                        // Obtener el valor de la primera columna (número de muestra)
+                        var numeroMuestra = $(this).find('td').eq(0).text().trim(); // Primer columna de cada fila
+
+                        // Obtener el valor seleccionado en el select de la misma fila
+                        var analistaSeleccionado = $(this).find('td select').val(); // Valor del select en la fila actual
+
+                        // Llamada AJAX para enviar los datos al servlet
+                        $.ajax({
+                            url: '${pageContext.request.contextPath}/reasignarUsuario', // URL del servlet para asignar
+                            type: 'POST',
+                            data: {
+                                idSolicitud: numeroMuestra,
+                                usuarioNIT: analistaSeleccionado // Enviar el NIT del analista seleccionado
+                            },
+                            success: function (response) {
+                                console.log('Asignación exitosa para el número de muestra: ' + numeroMuestra);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('Error al asignar el analista para el número de muestra: ' + numeroMuestra);
+                                console.log(xhr.responseText); // Ver detalles del error
+                            }
+                        });
+                    });
+
+                    // Si todo fue correctamente asignado, devolvemos true para que se ejecute la siguiente función
+                    return true;
+                }
+
+
+                function limpiarFormulario() {
+                    // Limpiar los inputs de texto
+                    $('#modalCambiarEstado').find('input[type="text"], input[type="checkbox"], textarea').val('').prop('checked', false);
+
+                    // Restablecer los valores de los selects a sus valores por defecto
+                    $('#modalCambiarEstado').find('select').each(function () {
+                        $(this).val($(this).find('option').first().val()); // Establecer al primer valor por defecto
+                    });
+
+                    // Limpiar las filas de la tabla, si existen
+                    $('#modalCambiarEstado').find('#tablaSolicitudes tbody').empty();
+                    
+                    $('#modalCambiarEstado').modal('hide');
+                    $('#modalReasignar').show();
+                    $('#tablaReasignar').hide();
+
+                    
+                }
+
+                $('#cancelarModal').click(function () {
+                    limpiarFormulario();
+                });
+
             });
         </script>
         <script>
@@ -251,44 +465,76 @@
                 <button id="guardaru" class="btn btn-primary">Guardar</button>
             </div>
 
+
+
             <!-- Modal para cambiar estado -->
             <div class="modal fade" id="modalCambiarEstado" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabel">Cambiar Estado de la Muestra</h5>
+                        <div id="modalReasignar">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalLabel">Cambiar Estado de la Muestra</h5>
+                            </div>
+                            <div class="modal-body">
+                                <form id="form-cambiar-estado">
+                                    <div class="form-group">
+                                        <label for="nit">Nit</label>
+                                        <input type="text" id="nitEstado" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nombre">Nombre</label>
+                                        <input type="text" id="nombreEstado" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nuevoEstado">Nuevo Estado</label>
+                                        <select id="nuevoEstado" class="form-control">
+                                            <option value="true">Activo</option>
+                                            <option value="false">Inactivo</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="comentario">Comentario:</label>
+                                        <textarea id="comentario" class="form-control" rows="4" style="resize: none;" placeholder="Escribe tu comentario aquí" required=""></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="solicutedesr">Reasignar Solicitudes</label>
+                                        <input type="checkbox" id="reasignar" name="reasignar" > 
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <form id="form-cambiar-estado">
-                                <div class="form-group">
-                                    <label for="nit">Nit</label>
-                                    <input type="text" id="nitEstado" class="form-control" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="nombre">Nombre</label>
-                                    <input type="text" id="nombreEstado" class="form-control" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="nuevoEstado">Nuevo Estado</label>
-                                    <select id="nuevoEstado" class="form-control">
-                                        <option value="true">Activo</option>
-                                        <option value="false">Inactivo</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="comentario">Comentario:</label>
-                                    <textarea id="comentario" class="form-control" rows="4" style="resize: none;" placeholder="Escribe tu comentario aquí" required=""></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="solicutedesr">Reasignar Solicitudes</label>
-                                    <input type="checkbox" id="reasignar" name="reasignar" > 
-                                </div>
-                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                            </form>
+                        <div id="tablaReasignar" style="display:none;">
+                            <table class="table table-bordered" id="tablaSolicitudes">
+                                <thead>
+                                    <tr>
+                                        <th>Número Muestra</th>
+                                        <th>Estado Solicitud</th>
+                                        <th>Estado Muestra</th>
+                                        <th>reasignar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Las filas de la tabla se llenarán con JavaScript -->
+                                </tbody>
+                            </table>
+                            <button class="btn btn-primary" id="btnCambiarEstadoRe">Guardar</button>
+
                         </div>
+                        <button class="btn btn-primary" id="cancelarModal">Cancelar</button>
+
                     </div>
                 </div>
             </div>
+
+
+            <script>
+                // Usar EL para asignar el valor de la sesión a una variable de JavaScript
+                const loginUsuario = "${sessionScope.usuario}";  // Debería tener el valor del login del usuario
+
+                // Asegúrate de que el valor se haya asignado correctamente
+                console.log("Login del usuario desde la sesión: " + loginUsuario);
+            </script>
 
             <!-- Bootstrap JS y Popper.js para el modal -->
             <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>

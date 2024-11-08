@@ -14,15 +14,21 @@ public class Entidad {
     String nombre;
     String tipo;
     boolean estado;
+    String correo;
+    String direccion;
+    String telefono;
 
     public Entidad() {
     }
 
-    public Entidad(String nit, String nombre, String tipo, boolean estado) {
+    public Entidad(String nit, String nombre, String tipo, boolean estado, String correo, String direccion, String telefono) {
         this.nit = nit;
         this.nombre = nombre;
         this.tipo = tipo;
         this.estado = estado;
+        this.correo = correo;
+        this.direccion = direccion;
+        this.telefono = telefono;
     }
 
     public String getNit() {
@@ -56,7 +62,30 @@ public class Entidad {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    
-    
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
     
 }

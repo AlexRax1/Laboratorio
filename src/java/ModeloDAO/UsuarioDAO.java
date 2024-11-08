@@ -48,13 +48,12 @@ public class UsuarioDAO {
     // Método para obtener todos los usuarios
     public List<Usuario> obtenerUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
-        String sql = "SELECT nit,nombre, rol_nombre, actor,estado, carga_trabajo FROM Usuario"; // Ajusta el nombre de la tabla y las columnas según tu base de datos
+        String sql = "SELECT nit, nombre, rol_nombre, actor, estado FROM Usuario ORDER BY estado DESC";
 
         try (Connection connection = cn.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
 
-            // Iterar sobre el resultado
             while (resultSet.next()) {
                 Usuario usuario = new Usuario();
                 usuario.setNit(resultSet.getString("nit"));
@@ -62,16 +61,38 @@ public class UsuarioDAO {
                 usuario.setRolNombre(resultSet.getString("rol_nombre"));
                 usuario.setActor(resultSet.getString("actor"));
                 usuario.setEstado(resultSet.getBoolean("estado"));
-                usuario.setCargoTrabajo(resultSet.getInt("carga_trabajo")); // Cambia esto según tu clase Usuario
+
+                // Aquí obtenemos la carga de trabajo usando la nueva función
+                int cargaTrabajo = cargaTrabajo(resultSet.getString("nit"));
+                usuario.setCargoTrabajo(cargaTrabajo);
 
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
-
-            e.printStackTrace(); // Manejo de errores
+            e.printStackTrace();
         }
 
         return usuarios;
+    }
+
+// Método para obtener la cantidad de solicitudes activas de un usuario específico
+    public int cargaTrabajo(String nit) {
+        int cantidadSolicitudes = 0;
+        String sql = "SELECT COUNT(id_solicitud) FROM SolicitudMuestraAnalisis WHERE usuario_asignado = ? AND estado_solicitud <> 'Finalizada'";
+
+        try (Connection connection = cn.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, nit); // Asignamos el nit del usuario
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    cantidadSolicitudes = resultSet.getInt(1); // Obtenemos la cantidad de solicitudes
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cantidadSolicitudes;
     }
 
     public boolean cambiarEstado(String nit, boolean nuevoEstado) {
@@ -115,8 +136,8 @@ public class UsuarioDAO {
         return null; // Si no se encuentra el NIT, devuelve null
     }
 
-    public boolean agregarUsuario(String nit, String login, String nombre, boolean estado, int id_rol, String rol_nombre, String actor, String password) {
-        String query = "INSERT INTO Usuario (login, nit, nombre, estado, id_rol, rol_nombre, actor, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean agregarUsuario(String nit, String login, String nombre, boolean estado, int id_rol, String rol_nombre, String actor, String password, String correo) {
+        String query = "INSERT INTO Usuario (login, nit, nombre, estado, id_rol, rol_nombre, actor, password, correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
         try (Connection con = cn.getConnection(); // Obtener la conexión a la base de datos
                 PreparedStatement preparedStatement = con.prepareStatement(query)) {
 
@@ -128,6 +149,7 @@ public class UsuarioDAO {
             preparedStatement.setString(6, rol_nombre);
             preparedStatement.setString(7, actor);
             preparedStatement.setString(8, password);
+            preparedStatement.setString(9, correo);
 
             int rowsAffected = preparedStatement.executeUpdate(); // Ejecuta la inserción
             return rowsAffected > 0; // Retorna true si se insertó correctamente
@@ -137,4 +159,41 @@ public class UsuarioDAO {
         return false; // Si hubo un error o no se insertó, retorna false
     }
 
+    public String correoUsuario(String nit) {
+        String query = "SELECT correo FROM listaUsuarios WHERE nit = ? ";
+        try (Connection con = cn.getConnection(); // Obtener la conexión a la base de datos
+                PreparedStatement preparedStatement = con.prepareStatement(query)) {
+
+            preparedStatement.setString(1, nit);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String correo = resultSet.getString("correo");
+                return correo;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    
+    
+    public void agregarBitacora(String nitAsignacion, boolean estado, String motivo, String nitAdicion){
+        String query = "INSERT INTO BitacoraUsuarios (usuario_asignacion, usuario_adicion, motivo, estado) VALUES (?, ?, ?, ?)";
+        try (Connection con = cn.getConnection(); // Obtener la conexión a la base de datos
+                PreparedStatement preparedStatement = con.prepareStatement(query)) {
+
+            preparedStatement.setString(1, nitAsignacion);
+            preparedStatement.setString(2, nitAdicion);
+            preparedStatement.setString(3, motivo);
+            preparedStatement.setBoolean(4, estado);
+
+
+            preparedStatement.executeUpdate(); // Ejecuta la inserción
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de errores
+        }
+        
+    }
 }

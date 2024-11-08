@@ -5,8 +5,10 @@
  */
 package Controlador;
 
+import Modelo.Solicitud;
 import Modelo.Usuario;
 import Modelo.UsuarioG;
+import ModeloDAO.SolicitudDAO;
 import ModeloDAO.UsuarioDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author alex1
  */
 //name = "srvUsuario", urlPatterns = {"/srvUsuario"}
-@WebServlet(urlPatterns = {"/datosUsuario", "/cambiarEstado", "/agregarUsuario", "/buscarUsuario"})
+@WebServlet(urlPatterns = {"/datosUsuario", "/cambiarEstado", "/agregarUsuario", "/buscarUsuario", "/verificarSolicitudes", "/obtenerSolicitudesAnalista"})
 public class ControladorUsuario extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,6 +40,12 @@ public class ControladorUsuario extends HttpServlet {
                 break;
             case "/buscarUsuario":
                 buscarUsuario(request, response); // Para mostrar el formulario de agregar usuario
+                break;
+            case "/verificarSolicitudes":
+                verificarSolicitudes(request, response); // Para mostrar el formulario de agregar usuario
+                break;
+            case "/obtenerSolicitudesAnalista":
+                solicitudesAnalista(request, response); // Para mostrar el formulario de agregar usuario
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -97,6 +105,9 @@ public class ControladorUsuario extends HttpServlet {
     private void cambiarEstadoUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nit = request.getParameter("nit"); // Obtener el ID del usuario seleccionado
         String estado = request.getParameter("nuevoEstado"); // Obtener el nuevo estado
+        String motivo = request.getParameter("motivo"); // Obtener el nuevo estado
+        String nitAdicion = request.getParameter("nitAdicion"); // Obtener el nuevo estado
+
         UsuarioDAO usuarioDao = new UsuarioDAO();
 
         if (nit == null || estado == null) {
@@ -107,13 +118,14 @@ public class ControladorUsuario extends HttpServlet {
         if ("true".equals(estado)) {
             nuevoEstado = true;
         }
+
         if (usuarioDao.cambiarEstado(nit, nuevoEstado)) {
+            usuarioDao.agregarBitacora(nit, nuevoEstado, motivo, nitAdicion);
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-
 
     private void buscarUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
@@ -140,9 +152,66 @@ public class ControladorUsuario extends HttpServlet {
         }
     }
 
+    private void solicitudesAnalista(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String nit = request.getParameter("nit");
+
+        SolicitudDAO solicitudDao = new SolicitudDAO();
+        List<Solicitud> solicitudes = solicitudDao.obtenerSolicitudes(nit);
+
+        // Configurar la respuesta para que sea en formato JSON
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        // Usamos StringBuilder para construir el JSON manualmente
+        StringBuilder json = new StringBuilder();
+        json.append("{");
+        json.append("\"solicitudes\": [");
+
+        // Iteramos sobre las solicitudes y agregamos cada una al JSON
+        for (int i = 0; i < solicitudes.size(); i++) {
+            Solicitud solicitud = solicitudes.get(i);
+
+            json.append("{");
+            json.append("\"numero_muestra\": \"").append(solicitud.getIdSolicitud()).append("\",");
+            json.append("\"estado_solicitud\": \"").append(solicitud.getEstadoSolicitud()).append("\",");
+            json.append("\"estado_muestra\": \"").append(solicitud.getEstadoMuestra()).append("\"");
+            json.append("}");
+
+            if (i < solicitudes.size() - 1) {
+                json.append(","); // No agregar coma después del último objeto
+            }
+        }
+
+        json.append("]");
+        json.append("}");
+        
+        // Escribir el JSON en la respuesta
+        response.getWriter().write(json.toString());
+    }
+
+    private void verificarSolicitudes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String nit = request.getParameter("nit");
+        UsuarioDAO usuarioDao = new UsuarioDAO();
+
+        // Llamar al método cargaTrabajo para obtener el número de solicitudes activas
+        int cantidadSolicitudesActivas = usuarioDao.cargaTrabajo(nit);
+        boolean tieneSolicitudesActivas = cantidadSolicitudesActivas > 0; // Verificar si hay solicitudes activas
+
+        // Construir la respuesta JSON con StringBuilder
+        StringBuilder jsonResponse = new StringBuilder();
+        jsonResponse.append("{");
+        jsonResponse.append("\"tieneSolicitudesActivas\":").append(tieneSolicitudesActivas);
+        jsonResponse.append("}");
+
+        // Enviar respuesta al cliente
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8"); // Asegurarse de que se maneje correctamente la codificación
+        response.getWriter().write(jsonResponse.toString());
+    }
+
     private void agregarUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String nit = request.getParameter("nit");
-        String login = "1"; // Cambia esto según tu lógica de obtención de login
+        String login = "1";
         if (nit == null || nit.isEmpty()) {
             return; // Asegúrate de que nit no sea nulo o vacío
         }
@@ -159,9 +228,9 @@ public class ControladorUsuario extends HttpServlet {
             String password = usuariog.getPassword(); // Asegúrate de que este valor esté presente en UsuarioG
             boolean estado = true; // Define el estado (true o false según tu lógica)
             int id_rol = obtenerIdRolPorPuesto(rol_nombre); // Método para mapear el puesto a un id_rol
-
+            String correo = usuarioDao.correoUsuario(nit);
             // Llama al DAO para insertar el nuevo usuario
-            boolean usuarioAgregado = usuarioDao.agregarUsuario(nit, logini, nombre, estado, id_rol, rol_nombre, actor, password);
+            boolean usuarioAgregado = usuarioDao.agregarUsuario(nit, logini, nombre, estado, id_rol, rol_nombre, actor, password, correo);
 
             if (usuarioAgregado) {
                 response.getWriter().write("Usuario agregado correctamente.");
@@ -177,23 +246,23 @@ public class ControladorUsuario extends HttpServlet {
     private int obtenerIdRolPorPuesto(String puesto) {
         switch (puesto) {
             case "Administrador":
-                return 1; 
+                return 1;
             case "RegistroMuestras":
                 return 2;
             case "AnalistadeLaboratorio":
-                return 3; 
+                return 3;
             case "AlmacenamientodeMuestra":
-                return 4; 
+                return 4;
             case "SupervisorLaboratorio":
-                return 5; 
+                return 5;
             case "JefeUnidadLaboratorio":
-                return 6; 
+                return 6;
             case "LaboratorioExterno":
-                return 7; 
+                return 7;
             case "Reportes":
-                return 8; 
+                return 8;
             case "VisualizacionDocumentos":
-                return 9; 
+                return 9;
             default:
                 return 0; // O cualquier otro valor predeterminado
         }

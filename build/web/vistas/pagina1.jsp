@@ -21,7 +21,16 @@
         <title>JSP Page</title>
         
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
+                
+                <style>
+        /* Modo oscuro */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #f5f5f5;
+            }
+        }
+    </style>
     </head>
     <body>
         

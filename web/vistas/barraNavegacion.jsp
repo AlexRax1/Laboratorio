@@ -23,6 +23,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <title>Barra Navegacion</title>
+        
         <style>
             nav.navbar {
                 flex-flow: column nowrap !important;
@@ -55,6 +56,8 @@
                 }
             };
         </style>
+        
+        
 
     </head>
     <body>
@@ -110,10 +113,10 @@
                 <ul class="navbar-nav">
                     <!-- Opciones comunes para todos los usuarios -->
                     <li class="nav-item">
-                        <a class="nav-link" href="paginaPrincipal.jsp">Inicio</a>
+                        <a class="nav-link" href="ReporteSolicitudEntidad.jsp">reporte unidad administrativa</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="perfil.jsp">Perfil</a>
+                        <a class="nav-link" href="ReporteMuestraAnalista.jsp">Reportes Musetra Analista</a>
                     </li>
 
                     <!-- Opciones solo para Administrador (rol 1) -->

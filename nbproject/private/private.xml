@@ -4,26 +4,40 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorBandejaAnalista.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/barraNavegacion.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/ReporteMuestraAnalista.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorReasignacion.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/EntidadGuardada.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/index.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/ReporteSolicitudEntidad.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/Solicitud.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/SolicitudDAO.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Config/Conexion.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/UsuarioG.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/Usuario.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/ReasignarDAO.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorRegistroSolicitudMuestra.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/Persona.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Config/TestConnection.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/EntidadGuardadaDAO.java</file>
-            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/barraNavegacion.jsp</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/pagina1.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/EntidadDAO.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/VisualizacionSolicitudes.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/Documentos.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/ReasignacionSolicitudes.jsp</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/MantenimientoUsuarios.jsp</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/RegistroSolicitudMuestra.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/analistas.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorLogin.java</file>
-            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/index.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/Formulario.jsp</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorUsuario.java</file>
-            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/pagina2.jsp</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/RegistrarSolicitudDAO.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorFormulario.java</file>
-            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Config/Conexion.java</file>
-            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/UsuarioG.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/PersonaDAO.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/ModeloDAO/UsuarioDAO.java</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/web/vistas/MantenimientoCatalogo.jsp</file>
             <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorMantenimientoCatalogo.java</file>
-            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Controlador/ControladorRegistroSolicitudMuestra.java</file>
+            <file>file:/C:/Users/alex1/OneDrive/Documentos/NetBeansProjects/Laboratorio1/src/java/Modelo/Entidad.java</file>
         </group>
     </open-files>
 </project-private>

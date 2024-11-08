@@ -6,6 +6,7 @@
 package Controlador;
 
 import Modelo.Entidad;
+import Modelo.EntidadGuardada;
 import ModeloDAO.EntidadDAO;
 import ModeloDAO.EntidadGuardadaDAO;
 import java.io.IOException;
@@ -73,9 +74,13 @@ public class ControladorMantenimientoCatalogo extends HttpServlet {
 
     private void guardar(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String nit = request.getParameter("nit");
-        String nombre = request.getParameter("nombre");
         String tipo = request.getParameter("tipo");
-
+        EntidadGuardadaDAO daoeg = new EntidadGuardadaDAO();
+        EntidadGuardada entidadg = daoeg.obtenerPorNit(nit);
+        String nombre = entidadg.getNombre();
+        String correo = entidadg.getCorreo();
+        String direccion = entidadg.getDireccion();
+        String telefono = entidadg.getTelefono();
         // Validar datos
         if (nit == null || nombre == null || tipo == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Faltan datos para guardar la entidad.");
@@ -90,6 +95,9 @@ public class ControladorMantenimientoCatalogo extends HttpServlet {
 
         entidad.setNit(nit);
         entidad.setNombre(nombre);
+        entidad.setCorreo(correo);
+        entidad.setDireccion(direccion);
+        entidad.setTelefono(telefono);
         if (tipo.equals("opcion1")) {
             entidad.setTipo("privada");
         } else if (tipo.equals("opcion2")) {

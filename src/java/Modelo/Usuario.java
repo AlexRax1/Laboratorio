@@ -19,6 +19,15 @@ public class Usuario {
     String actor;
     int cargoTrabajo;
     String password;
+    String correo;
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
 
     public Usuario() {
     }
