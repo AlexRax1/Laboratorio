@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author alex1
  */
-@WebServlet(urlPatterns = {"/cargarAnalistas", "/cargarAnalistas2"})
+@WebServlet(urlPatterns = {"/cargarAnalistas", "/cargarAnalistas2", "/cargarAnalistas3"})
 public class analistas extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -43,6 +43,10 @@ public class analistas extends HttpServlet {
                 case "/cargarAnalistas2":
                     String usuarioExcluido = request.getParameter("valor");
                     json.append(cargarAnalistasExcluyendo(con, usuarioExcluido));
+                    break;
+                    
+                case "/cargarAnalistas3":
+                    json.append(cargarAnalistas2(con));
                     break;
 
                 default:
@@ -64,6 +68,31 @@ public class analistas extends HttpServlet {
         json.append("["); // Empieza la estructura JSON
 
         String sql = "SELECT nombre, nit FROM Usuario where id_rol = 3 AND estado = true";
+        try (PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            boolean first = true;
+            while (rs.next()) {
+                if (!first) {
+                    json.append(","); // Agregar coma para separar objetos
+                }
+                json.append("{");
+                json.append("\"nombre\":\"").append(rs.getString("nombre")).append("\",");
+                json.append("\"nit\":\"").append(rs.getString("nit")).append("\""); // Agrega el NIT
+                json.append("}");
+                first = false;
+            }
+        }
+        json.append("]"); // Cierra la estructura JSON como arreglo
+        return json.toString();
+    }
+    
+    
+    private String cargarAnalistas2(Connection con) throws SQLException {
+        StringBuilder json = new StringBuilder();
+        json.append("["); // Empieza la estructura JSON
+
+        String sql = "SELECT nombre, nit FROM Usuario  " ;// where id_rol = 3
         try (PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
 

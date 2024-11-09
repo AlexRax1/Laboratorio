@@ -33,8 +33,17 @@ public class Solicitud {
     private String estadoPorcion; 
     private String usuarioAsignado; 
     private String rolUsuario; 
-    
+    private Timestamp fechaFin; 
 
+    public Timestamp getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Timestamp fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    
     public Solicitud() {
     }
 
