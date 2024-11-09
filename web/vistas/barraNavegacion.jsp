@@ -126,7 +126,7 @@
                                 Servicios
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                <li><a class="dropdown-item" href="pagina2.jsp">Gestionar Usuarios</a></li>
+                                <li><a class="dropdown-item" href="VisualizacionSolicitudes.jsp">Visualizacion de solicitudes</a></li>
                                 <li><a class="dropdown-item" href="MantenimientoCatalogo.jsp">Mantenimiento de Catálogos</a></li>
 
                                 <!-- Submenú dentro del menú desplegable -->

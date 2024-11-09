@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-
+import java.text.SimpleDateFormat;
 
 /**
  *
  * @author alex1
  */
-@WebServlet(urlPatterns = {"/buscarSolicitudesRE", "/reasignarUsuario", "/obtenerDocumentos"})
+@WebServlet(urlPatterns = {"/buscarSolicitudesRE", "/reasignarUsuario", "/obtenerDocumentos", "/buscarSolicitudesRE2"})
 public class ControladorReasignacion extends HttpServlet {
 
     @Override
@@ -36,6 +36,9 @@ public class ControladorReasignacion extends HttpServlet {
         switch (path) {
             case "/buscarSolicitudesRE":
                 buscarSolicitud(request, response);
+                break;
+            case "/buscarSolicitudesRE2":
+                buscarSolicitudesRE2(request, response);
                 break;
             case "/obtenerDocumentos":
                 documentos(request, response);
@@ -108,6 +111,83 @@ public class ControladorReasignacion extends HttpServlet {
                         .append("\"rol\":\"").append(solicitud.getRolUsuario()).append("\"")
                         .append("}");
 
+                if (i < solicitudes.size() - 1) {
+                    jsonBuilder.append(",");
+                }
+            }
+
+            jsonBuilder.append("]");
+
+            // Enviar la respuesta JSON al cliente
+            response.getWriter().write(jsonBuilder.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al obtener las solicitudes.");
+        }
+    }
+
+    private void buscarSolicitudesRE2(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        // Obtener los parámetros de búsqueda
+        String numeroMuestra = request.getParameter("numeroMuestra");
+        String nitProveedor = request.getParameter("nitProveedor");
+
+       
+
+        try {
+            // Obtener los resultados desde el DAO usando los parámetros
+            List<Solicitud> solicitudes = solicitudDAO.buscarSolicitudesMuestraProveedor(numeroMuestra, nitProveedor);
+
+            // Si no hay solicitudes, enviar un error
+            if (solicitudes.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("[]"); // Devolver un array vacío
+                return;
+            }
+
+            // Construir la respuesta JSON
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("[");
+
+            for (int i = 0; i < solicitudes.size(); i++) {
+                Solicitud solicitud = solicitudes.get(i);
+
+                // Personalizar el tipo de solicitud
+                if (solicitud.getTipoSolicitud() != null) {
+                    switch (solicitud.getTipoSolicitud()) {
+                        case "AR":
+                            solicitud.setTipoSolicitud("Muestra para análisis");
+                            break;
+                        case "OTM":
+                            solicitud.setTipoSolicitud("Solicitud sin Muestra");
+                            break;
+                        case "PM":
+                            solicitud.setTipoSolicitud("Porción de Muestra");
+                            break;
+                    }
+                }
+
+                // Formatear la fecha en un formato legible
+                String fechaSolicitud = solicitud.getFecha() != null
+                        ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(solicitud.getFecha()) : "";
+
+                // Construir el objeto JSON para cada solicitud
+                jsonBuilder.append("{")
+                        .append("\"idSolicitud\":\"").append(solicitud.getIdSolicitud()).append("\",")
+                        .append("\"fechaSolicitud\":\"").append(fechaSolicitud).append("\",")
+                        .append("\"nitProveedor\":\"").append(solicitud.getNitProveedor()).append("\",")
+                        .append("\"nombreProveedor\":\"").append(solicitud.getNombreProveedor()).append("\",")
+                        .append("\"numeroMuestra\":\"").append(solicitud.getNumeroMuestra()).append("\",")
+                        .append("\"estadoSolicitud\":\"").append(solicitud.getEstadoSolicitud()).append("\",")
+                        .append("\"estadoMuestra\":\"").append(solicitud.getEstadoMuestra()).append("\",")
+                        .append("\"estadoPorcionMuestra\":\"").append(solicitud.getEstadoPorcion()).append("\",")
+                        .append("\"usuarioAsignado\":\"").append(solicitud.getUsuarioAsignado()).append("\",")
+                        .append("\"rolUsuarioAsignado\":\"").append(solicitud.getRolUsuario()).append("\"")
+                        .append("}");
+
+                // Agregar una coma entre objetos JSON, excepto después del último
                 if (i < solicitudes.size() - 1) {
                     jsonBuilder.append(",");
                 }
